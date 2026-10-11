@@ -17,3 +17,8 @@ APP_SOURCE="$STAGE/Payload/GTAVMobile.app"
 rsync -a --exclude Info.plist --exclude embedded.mobileprovision --exclude _CodeSignature --exclude PkgInfo \
   "$APP_SOURCE/" "$TARGET_BUILD_DIR/$WRAPPER_NAME/"
 chmod +x "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"
+
+# This declared build output makes Xcode's CodeSign task depend on every
+# replacement of the precompiled executable, including incremental Run builds.
+touch "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"
+printf '%s\n' "Prepared by build phase $$" > "$TARGET_BUILD_DIR/$WRAPPER_NAME/GTAVPrepared.txt"

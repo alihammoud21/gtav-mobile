@@ -51,3 +51,20 @@ No Apple Account was used to provision a phone during this check. Actual
 Personal Team signing, USB installation, seven-day refresh, and gameplay still
 need a physical-device test. The Android APK and iOS game binary are unchanged
 from alpha.1; this update changes the computer installation flow.
+
+## Incremental signing fix — v0.1.0-alpha.3
+
+Reproduced the alpha.2 failure in the downloaded project: an initial build ran
+CodeSign, but a subsequent Run replaced the executable and reused the cached
+signing result. The output reverted to an ad-hoc signature with no team.
+
+The preparation phase now declares a file inside the app as an output and
+updates it whenever it replaces the game executable. This creates an explicit
+build dependency for Xcode's CodeSign task. A timestamp-only change to the
+executable was insufficient; the declared output fixed the repeated-build case.
+
+Two consecutive builds of the same configured project both ran CodeSign.
+The final app passed strict signature verification with an Apple Development
+certificate, matching bundle identifier and development team. `devicectl`
+successfully installed it on the connected physical iPhone. Gameplay and
+seven-day renewal are still unverified. The runtime binaries are unchanged.

@@ -109,7 +109,7 @@ compatibility. User-facing app names and bundle identifiers use GTAV Mobile.
 
 ## Package USB downloads
 
-`python3 scripts/package-release.py --version v0.1.0-alpha.2` packages the
+`python3 scripts/package-release.py --version v0.1.0-alpha.3` packages the
 release APK and game-enabled IPA. The Mac USB ZIP includes a generated Xcode
 project that signs the precompiled app with the user's Personal Team. It uses
 empty custom entitlements for free-account provisioning. To change that

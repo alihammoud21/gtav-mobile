@@ -28,6 +28,8 @@ targets:
     postBuildScripts:
       - name: Prepare precompiled game for device signing
         basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(WRAPPER_NAME)/GTAVPrepared.txt
         script: |
           /bin/bash "$SRCROOT/prepare-app.sh"
 schemes:

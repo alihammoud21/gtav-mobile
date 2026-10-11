@@ -5,7 +5,7 @@
 
 iOS · Android · macOS — powered by Rust, Wasmtime and wgpu.
 
-[**Download**](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.2) · [Install](docs/INSTALLING.md) · [Build](docs/BUILDING.md) · [Credits](NOTICE.md)
+[**Download**](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.3) · [Install](docs/INSTALLING.md) · [Build](docs/BUILDING.md) · [Credits](NOTICE.md)
 
 </div>
 

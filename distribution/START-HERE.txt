@@ -1,4 +1,4 @@
-GTAV MOBILE — v0.1.0-alpha.2
+GTAV MOBILE — v0.1.0-alpha.3
 Android + iOS, with automatic game setup from playgta5.
 Experimental: builds are checked; real-device gameplay is not yet verified.
 
@@ -42,7 +42,8 @@ requires macOS and Xcode. Android also supports the Windows USB helper above.
 
 iOS 15+; the original runtime recommends 8 GB RAM. Free signing does not grant
 increased-memory entitlements. Device memory limits can affect startup.
-Personal Team installation and physical-device gameplay have not been verified.
+Development-signed USB installation was verified on one iPhone. Gameplay and
+weekly signature renewal have not yet been verified.
 Apple's Personal Team details:
 https://developer.apple.com/help/account/basics/about-your-developer-account
 

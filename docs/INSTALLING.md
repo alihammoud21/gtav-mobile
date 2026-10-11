@@ -39,9 +39,8 @@ project so you can repeat this each week.
 
 Requires a Mac, Xcode, iOS 15+, and a compatible high-memory phone; the original
 runtime recommends 8 GB RAM. Free signing does not grant the increased-memory
-entitlement, so device memory limits can prevent gameplay. This package's build
-and signing preparation are checked; actual Personal Team installation and
-physical-phone gameplay remain unverified. This USB flow is available on Mac.
+entitlement, so device memory limits can prevent gameplay. Development-signed USB installation has been verified on one physical iPhone.
+Gameplay and weekly signature renewal remain unverified. This USB flow is available on Mac.
 
 Apple's [device run guide](https://help.apple.com/xcode/mac/current/en.lproj/dev5a825a1ca.html)
 explains device pairing and signing. The separate IPA is the precompiled input
@@ -63,3 +62,11 @@ by **Download game**, not the manual importer.
 The desktop bundle includes both apps and the USB helpers. Game data is fetched
 on the phone, so this is not a fully offline installer. Checksums for all release
 assets are in `SHA256SUMS.txt`. See [game data](../GAME-DATA.md) for the pinned source.
+
+## Ad-hoc signature error in alpha.2
+
+Alpha.2 could restore the executable with its original ad-hoc signature on a repeated Run
+while Xcode reused an earlier signing result. Alpha.3 fixes the build dependency
+so replacing the game executable always triggers signing. Download the current
+Mac USB bundle and retain your existing team and bundle identifier when opening
+its project. You do not need to delete the installed app or its game data.
