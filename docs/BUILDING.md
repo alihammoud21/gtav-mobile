@@ -59,7 +59,7 @@ brew install xcodegen
 TEAM=YOUR_TEAM_ID ./make-ios.sh /absolute/path/to/game.zip --install
 ```
 
-For an IPA to sideload:
+For a precompiled IPA (used by the Mac USB installation project):
 
 ```sh
 ./make-ios.sh /absolute/path/to/game.zip --ipa
@@ -106,3 +106,13 @@ cargo check --locked --no-default-features --target aarch64-apple-ios --bin gtav
 
 Upstream `MUGUET_*` environment variables and native iOS symbols remain for
 compatibility. User-facing app names and bundle identifiers use GTAV Mobile.
+
+## Package USB downloads
+
+`python3 scripts/package-release.py --version v0.1.0-alpha.2` packages the
+release APK and game-enabled IPA. The Mac USB ZIP includes a generated Xcode
+project that signs the precompiled app with the user's Personal Team. It uses
+empty custom entitlements for free-account provisioning. To change that
+project, edit `distribution/iOS-USB/project.yml` and regenerate it with
+`xcodegen generate --spec distribution/iOS-USB/project.yml`. Include the shared
+scheme and project file in git. The user needs only Xcode, not XcodeGen or Rust.

@@ -1,0 +1,39 @@
+name: GTAVMobile
+options:
+  deploymentTarget:
+    iOS: "15.0"
+targets:
+  GTAVMobile:
+    type: application
+    platform: iOS
+    sources:
+      - path: stub.c
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.gtavmobile
+        PRODUCT_NAME: GTAVMobile
+        EXECUTABLE_NAME: gtav-mobile
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: PersonalTeam.entitlements
+        INFOPLIST_FILE: Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTED_PLATFORMS: iphoneos
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        ENABLE_DEBUG_DYLIB: NO
+        DEAD_CODE_STRIPPING: NO
+        STRIP_INSTALLED_PRODUCT: NO
+        COPY_PHASE_STRIP: NO
+        DEBUG_INFORMATION_FORMAT: dwarf
+    postBuildScripts:
+      - name: Prepare precompiled game for device signing
+        basedOnDependencyAnalysis: false
+        script: |
+          /bin/bash "$SRCROOT/prepare-app.sh"
+schemes:
+  GTAVMobile:
+    build:
+      targets:
+        GTAVMobile: all
+    run:
+      config: Release

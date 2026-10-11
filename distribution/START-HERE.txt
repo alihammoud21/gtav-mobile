@@ -1,4 +1,4 @@
-GTAV MOBILE — v0.1.0-alpha.1
+GTAV MOBILE — v0.1.0-alpha.2
 Android + iOS, with automatic game setup from playgta5.
 Experimental: builds are checked; real-device gameplay is not yet verified.
 
@@ -16,20 +16,35 @@ Requires ARM64, Android 9+ and Vulkan 1.1. High-memory devices recommended;
 minimum RAM and supported devices have not been established.
 Mac terminal alternative: bash Install-Android.command
 
-IPHONE / IPAD
-GTAVMobile-ios.ipa includes the precompiled game executable.
-Install it using AltStore Classic and your own Apple account:
-Mac: https://faq.altstore.io/altstore-classic/how-to-install-altstore-macos
-Windows: https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows
+IPHONE / IPAD — MAC + USB
+1. Install Xcode 26+ from the Mac App Store. Open it once and install iOS support.
+2. Connect your unlocked iPhone by USB. Tap Trust and enable Developer Mode
+   if prompted. Keep the entire extracted download folder together.
+3. Open Install-iPhone.command, or open iOS-USB/GTAVMobile.xcodeproj directly.
+4. In Xcode > Settings > Accounts, sign in with your Apple Account.
+5. Select the GTAVMobile target > Signing & Capabilities. Enable automatic
+   signing, choose your Personal Team, and replace "yourname" in the Bundle
+   Identifier with your own unique name. Keep that identifier for future use.
+6. Select your connected iPhone at the top, then Product > Run (Command-R).
+   Xcode signs, installs and launches the game over USB. Trust the developer
+   identity in iPhone Settings > General > VPN & Device Management if asked.
+7. Open GTAV Mobile, tap Download game, and keep it open until setup finishes.
 
-Connect your phone, trust the computer, and follow that guide to install AltStore.
-Import GTAVMobile-ios.ipa using My Apps +. Enable Developer Mode when required.
-Then open GTAV Mobile, tap Download game, keep it open until setup ends, and Play.
+Free Personal Team signing lasts seven days. The app stays installed but stops
+opening after expiry. Reconnect and Run again to renew it. Keep the same account,
+team and bundle identifier; do not delete the app when refreshing its signature.
+Save this extracted folder and your Xcode project for the next refresh.
 
-The IPA must be re-signed for your phone; simply copying it by USB cannot install
-it. Free-account signing requires periodic refresh. iOS 15+; an 8 GB RAM device
-is recommended by the original runtime. Memory limits depend on device/signing,
-and this build has not been gameplay-tested on a phone.
+The game executable is precompiled: no Rust or XcodeGen installation is needed.
+An internet connection is needed for Apple's signing and the initial game data.
+The Mac USB bundle includes the IPA and Xcode project; this iPhone USB flow
+requires macOS and Xcode. Android also supports the Windows USB helper above.
+
+iOS 15+; the original runtime recommends 8 GB RAM. Free signing does not grant
+increased-memory entitlements. Device memory limits can affect startup.
+Personal Team installation and physical-device gameplay have not been verified.
+Apple's Personal Team details:
+https://developer.apple.com/help/account/basics/about-your-developer-account
 
 GAME SETUP
 Use Wi-Fi. First setup downloads about 17 GB and installs about 16 GB.

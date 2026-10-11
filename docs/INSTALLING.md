@@ -17,15 +17,35 @@ allow several minutes. Minimum RAM and compatible devices are not yet measured.
 
 ## iOS
 
-**GTAVMobile-ios.ipa** includes the precompiled game executable. Follow AltStore
-Classic's [Mac guide](https://faq.altstore.io/altstore-classic/how-to-install-altstore-macos)
-or [Windows guide](https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows),
-then import the IPA using **My Apps → +**. Use your own Apple account and enable
-Developer Mode when required. Signing must be refreshed as required by your account.
+Download **gtav-mobile-mac-usb.zip** on your Mac and extract the whole folder.
+It includes the compiled game and a ready-to-open Xcode project.
 
-Requires iOS 15+; the original runtime recommends 8 GB RAM. Signing and device
-memory limits can affect startup. The IPA needs signing for each phone; copying
-it over USB alone will not install it.
+1. Install Xcode 26+ from the Mac App Store. Open it once and install iOS platform support.
+2. Connect your unlocked iPhone by USB, tap **Trust**, and enable **Developer Mode** if prompted.
+3. Open **Install-iPhone.command**. Alternatively, open `iOS-USB/GTAVMobile.xcodeproj` directly.
+4. In **Xcode → Settings → Accounts**, sign in with your Apple Account.
+5. Select the **GTAVMobile** target → **Signing & Capabilities**. Keep **Automatically manage signing** enabled, choose your **Personal Team**, and replace `yourname` in the bundle identifier with your own unique name.
+6. Select your connected iPhone in Xcode's top toolbar and choose **Product → Run** (`⌘R`). Xcode signs, installs and launches the app over USB.
+
+If iOS asks, trust your developer identity in **Settings → General → VPN & Device Management**.
+The game is already compiled; Rust and XcodeGen are not required for this download.
+Xcode still needs internet access to create or refresh your signing profile.
+
+Free Personal Team profiles [expire after seven days](https://developer.apple.com/help/account/basics/about-your-developer-account).
+The app stays installed but stops opening until you reconnect and **Run** again.
+Keep the same Apple account, team and bundle identifier, and **do not delete the app**
+when refreshing; reinstalling the same app preserves its data. Save the extracted
+project so you can repeat this each week.
+
+Requires a Mac, Xcode, iOS 15+, and a compatible high-memory phone; the original
+runtime recommends 8 GB RAM. Free signing does not grant the increased-memory
+entitlement, so device memory limits can prevent gameplay. This package's build
+and signing preparation are checked; actual Personal Team installation and
+physical-phone gameplay remain unverified. This USB flow is available on Mac.
+
+Apple's [device run guide](https://help.apple.com/xcode/mac/current/en.lproj/dev5a825a1ca.html)
+explains device pairing and signing. The separate IPA is the precompiled input
+used by the included project; the **Mac USB bundle** is the complete installation download.
 
 ## First launch
 

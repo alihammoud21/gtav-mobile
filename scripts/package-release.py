@@ -49,15 +49,31 @@ def package(version):
         destination = out / name
         shutil.copy2(source, destination)
         outputs.append(destination)
-    bundle = out / 'gtav-mobile-desktop-installers.zip'
-    with zipfile.ZipFile(bundle, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
-        for artifact in outputs:
-            archive.write(artifact, 'GTAV-Mobile/' + artifact.name)
-        for name in ['Install-Android.command', 'Install-Android.cmd', 'START-HERE.txt']:
-            archive.write(ROOT / 'distribution' / name, 'GTAV-Mobile/' + name)
-        for name in ['LICENSE', 'NOTICE.md', 'GAME-DATA.md']:
-            archive.write(ROOT / name, 'GTAV-Mobile/' + name)
-    outputs.append(bundle)
+    ios_files = [
+        'Install-iPhone.command', 'iOS-USB/Info.plist',
+        'iOS-USB/PersonalTeam.entitlements', 'iOS-USB/prepare-app.sh',
+        'iOS-USB/stub.c', 'iOS-USB/project.yml',
+        'iOS-USB/GTAVMobile.xcodeproj/project.pbxproj',
+        'iOS-USB/GTAVMobile.xcodeproj/xcshareddata/xcschemes/GTAVMobile.xcscheme',
+    ]
+    for bundle_name, platforms in [
+        ('gtav-mobile-desktop-installers.zip', outputs.copy()),
+        ('gtav-mobile-mac-usb.zip', [out / 'GTAVMobile-ios.ipa']),
+    ]:
+        bundle = out / bundle_name
+        with zipfile.ZipFile(bundle, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+            for artifact in platforms:
+                archive.write(artifact, 'GTAV-Mobile/' + artifact.name)
+            helpers = ios_files + ['START-HERE.txt']
+            if bundle_name == 'gtav-mobile-desktop-installers.zip':
+                helpers += ['Install-Android.command', 'Install-Android.cmd']
+            for name in helpers:
+                archive.write(ROOT / 'distribution' / name, 'GTAV-Mobile/' + name)
+            archive.writestr('GTAV-Mobile/iOS-USB/Game.sha256',
+                             hashlib.sha256(ipa.read_bytes()).hexdigest() + '  GTAVMobile-ios.ipa\n')
+            for name in ['LICENSE', 'NOTICE.md', 'GAME-DATA.md']:
+                archive.write(ROOT / name, 'GTAV-Mobile/' + name)
+        outputs.append(bundle)
     install = out / 'INSTALL.txt'
     shutil.copy2(ROOT / 'distribution/START-HERE.txt', install)
     outputs.append(install)

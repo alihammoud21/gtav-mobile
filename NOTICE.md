@@ -11,7 +11,7 @@ Modifications dated 2026-10-11 include application branding, an Android launcher
 and native runtime integration, platform-specific dependencies and graphics,
 Android input and surface lifecycle handling, build scripts, import and memory
 validation fixes, checksum-verified game setup, release packaging, regression
-tests, and documentation.
+tests, a precompiled Xcode USB signing project, and documentation.
 
 Upstream contributor credits:
 - Kagander: minimap fixes.
