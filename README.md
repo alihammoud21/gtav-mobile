@@ -6,7 +6,9 @@
 Native runtime for **iOS · Android · macOS**.
 Powered by Rust, Wasmtime and wgpu. Bring your own compatible game files.
 
-[Build guide](docs/BUILDING.md) · [License](LICENSE) · [Credits](NOTICE.md)
+[Download preview](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.1) · [Install guide](docs/INSTALLING.md) · [Build guide](docs/BUILDING.md)
+
+[License](LICENSE) · [Credits](NOTICE.md)
 
 </div>
 
@@ -14,6 +16,8 @@ Powered by Rust, Wasmtime and wgpu. Bring your own compatible game files.
 Runs the web port's `game.wasm` in a native app, with Metal on Apple devices and Vulkan on Android. iOS compiles the game at build time; Android and macOS compile and cache it on first launch.
 
 ## Get started
+Download the Android APK or iOS **runtime-only preview** from [Releases](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.1). The iOS preview cannot play; rebuild it with your own game code.
+
 Your ZIP needs `data/manifest.json`, `b/<build>/game.wasm` and `b/<build>/shaders/`. Game files are **not included**; a standard PC installation alone is not this format.
 
 | Platform | Build |

@@ -1,0 +1,45 @@
+GTAV MOBILE — v0.1.0-alpha.1
+Experimental app downloads. Game files are NOT included.
+
+ANDROID
+1. You can open gtav-mobile-android-preview.apk directly on your Android phone.
+   Allow installation from that browser/file manager when Android asks.
+2. Or use a USB cable and Install-Android.cmd (Windows) or
+   Install-Android.command (Mac). If Platform-Tools is missing, the installer
+   gives the official download address. Extract platform-tools beside it.
+3. Enable Developer options > USB debugging, unlock the phone and approve
+   your computer. Connect only one phone, then run the installer.
+4. Open GTAV Mobile and import your own compatible game ZIP.
+   The first launch compiles the game and can take several minutes.
+
+Requires ARM64, Android 9+ and Vulkan 1.1. This APK is debug-signed for testing.
+Gameplay and device compatibility have not been validated.
+On Mac, if double-clicking is unavailable, open Terminal in this folder and run:
+    bash Install-Android.command
+
+IPHONE / IPAD
+GTAVMobile-ios-runtime-preview.ipa is a NON-PLAYABLE runtime preview.
+It contains no embedded game code. Importing a ZIP cannot turn this IPA into
+a playable build: the iOS build must be rebuilt on a Mac with that game code.
+
+To sideload the preview, install AltServer/AltStore using the official guide:
+Windows: https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows
+Mac: https://faq.altstore.io/altstore-classic/how-to-install-altstore-macos
+Connect the phone, trust the computer, and use your own Apple ID in AltServer.
+Enable Developer Mode when required. Import the IPA using AltStore's My Apps +.
+The IPA is ad-hoc signed and must be signed for your device by AltStore or Xcode.
+Simply copying it to the phone or using Android's installer will not install it.
+Free-account signing expires and requires refresh; follow AltStore's guide.
+
+For a personal iOS build with compatible files you are authorized to use:
+https://github.com/alihammoud21/gtav-mobile/blob/main/docs/BUILDING.md
+
+GAME FORMAT
+Your own archive must contain data/manifest.json, b/<build>/game.wasm and
+b/<build>/shaders/. A normal PC installation is not this format.
+This release does not download or redistribute assets from playgta5.
+
+SOURCE AND LICENSE
+https://github.com/alihammoud21/gtav-mobile
+GPL-3.0-or-later. Original Muguet credits are retained in NOTICE.md.
+Independent project; not affiliated with Rockstar Games or Take-Two.

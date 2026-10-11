@@ -27,3 +27,6 @@ DerivedData/
 *.aab
 *.jks
 *.keystore
+
+__pycache__/
+*.py[cod]

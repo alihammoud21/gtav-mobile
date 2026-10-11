@@ -14,6 +14,8 @@ Local checks on Apple Silicon with Rust 1.98.1 and Xcode 27:
 | APK signing and 16 KB alignment checks | Passed |
 | macOS Swift launcher type check | Passed |
 | Shell syntax and Apple property lists | Passed |
+| Android Mac USB helper with mock adb | 4 tests passed |
+| Release archive integrity and iOS game-code exclusion | Passed |
 
 Regression coverage includes archive traversal, mismatched archive builds,
 failed-import recovery, guest-memory bounds, save persistence and disk-space
@@ -28,3 +30,6 @@ multiplayer interoperability, touch/controller behavior and Android
 background/resume have **not** been validated on a device. The generated IPA
 contains the launcher/runtime only and must be rebuilt with your game ZIP to
 play. The APK imports your compatible game ZIP after installation.
+
+The Windows batch installer has been reviewed but not executed on Windows.
+The USB helper tests use a mock adb; they do not install on a real phone.

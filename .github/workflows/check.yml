@@ -15,6 +15,7 @@ jobs:
       - name: Install Rust and iOS target
         run: rustup toolchain install 1.98.1 --profile minimal --target aarch64-apple-ios
       - run: cargo test --locked --all-targets
+      - run: python3 -m unittest discover -s tests -v
       - run: cargo check --locked --no-default-features --target aarch64-apple-ios --bin gtav-mobile
   android:
     runs-on: ubuntu-latest
@@ -25,6 +26,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - name: Install Rust and SDK
         run: |
           rustup toolchain install 1.98.1 --profile minimal --target aarch64-linux-android
