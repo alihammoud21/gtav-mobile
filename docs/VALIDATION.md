@@ -1,6 +1,8 @@
 # Validation — 2026-10-11
 
-Local checks on Apple Silicon with Rust 1.98.1 and Xcode 27:
+Local checks on Apple Silicon with Rust 1.98.1 and Xcode 27.
+[GitHub CI](https://github.com/alihammoud21/gtav-mobile/actions/runs/38163103160)
+also passed both Apple and Android jobs for the integrated game setup:
 
 | Check | Result |
 | --- | --- |
@@ -9,6 +11,12 @@ Local checks on Apple Silicon with Rust 1.98.1 and Xcode 27:
 | iOS Swift launcher type check | Passed |
 | Pinned source archive and game.wasm SHA-256 | Verified |
 | Actual game ahead-of-time compilation for iOS | Passed |
+| iOS IPA build, ARM64 executable and embedded game segment | Passed; 210,976,768-byte game segment |
+| iOS ad-hoc signature verification | Passed |
+| Android ARM64 release APK build and signing | Passed; release key, signature scheme v3 |
+| Android release lint | Passed; zero errors |
+| APK 16 KB alignment | Passed |
+| Both packaged download UIs, native bridge and pinned manifest | Verified |
 
 The downloader tests cover bad archive/file hashes, unsafe paths, interrupted
 setup markers, incomplete installation, platform-specific resume state, and
@@ -19,7 +27,7 @@ The iOS build uses the verified 63,201,802-byte executable from playgta5 build
 `8b0b5899ed`. Its SHA-256 is
 `11ca8d2c04c5e843d18ff4aea4899d72c86973c6b031df334e67c446b2ae83e0`.
 The original executable is patched by the runtime and compiled ahead of time;
-the IPA includes that compiled code, not an empty runtime preview.
+the IPA includes that compiled code.
 
 The complete 17 GB network setup, actual gameplay, performance, multiplayer,
 touch/controller behavior and background/resume have **not** been validated on
