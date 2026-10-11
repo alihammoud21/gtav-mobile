@@ -65,10 +65,14 @@ func muguet_game_ready() -> Bool
 @_silgen_name("muguet_has_game_code")
 func muguet_has_game_code() -> Bool
 
+@_silgen_name("gtav_setup")
+func gtav_setup(_ index: Int32, _ archive: UnsafePointer<CChar>?) -> UnsafePointer<CChar>
+
 final class Importer: ObservableObject {
     static let shared = Importer()
     @Published var ready = muguet_game_ready()
     @Published var progress: Double?
+    @Published var status = "Importing…"
     @Published var error: String?
     @Published var local: [URL] = []
 
@@ -79,7 +83,70 @@ final class Importer: ObservableObject {
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
     }
 
+    func download() {
+        error = nil
+        progress = 0
+        status = "Preparing download…"
+        UIApplication.shared.isIdleTimerDisabled = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            let archive = configURL.deletingLastPathComponent().appendingPathComponent("game-download.zip")
+            var failure: String?
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 60
+            configuration.timeoutIntervalForResource = 7200
+            let session = URLSession(configuration: configuration)
+            defer { session.invalidateAndCancel(); try? FileManager.default.removeItem(at: archive) }
+            do {
+                let json = Data(String(cString: gtav_setup(-2, nil)).utf8)
+                guard let manifest = try JSONSerialization.jsonObject(with: json) as? [String: Any],
+                      let parts = manifest["parts"] as? [[String: Any]] else { throw SetupError.message("Invalid game manifest") }
+                for (index, part) in parts.enumerated() {
+                    if part["done"] as? Bool == true { continue }
+                    guard let address = part["url"] as? String, let url = URL(string: address),
+                          let bytes = part["bytes"] as? NSNumber else { throw SetupError.message("Invalid download part") }
+                    try? FileManager.default.removeItem(at: archive)
+                    let values = try archive.deletingLastPathComponent().resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+                    if let free = values.volumeAvailableCapacityForImportantUsage, free < bytes.int64Value * 2 + 268435456 {
+                        throw SetupError.message("Free more storage, then resume setup.")
+                    }
+                    let label = "Downloading part \(index + 1) of \(parts.count)…"
+                    DispatchQueue.main.async { self.status = label; self.progress = Double(index) / Double(parts.count) }
+                    let semaphore = DispatchSemaphore(value: 0)
+                    var downloadError: Error?
+                    session.downloadTask(with: url) { temporary, response, error in
+                        defer { semaphore.signal() }
+                        do {
+                            if let error { throw error }
+                            guard let http = response as? HTTPURLResponse, http.statusCode == 200, let temporary else {
+                                throw SetupError.message("Download server unavailable. Try again.")
+                            }
+                            let size = try FileManager.default.attributesOfItem(atPath: temporary.path)[.size] as? NSNumber
+                            guard size?.int64Value == bytes.int64Value else { throw SetupError.message("Incomplete download. Try again.") }
+                            try FileManager.default.moveItem(at: temporary, to: archive)
+                        } catch { downloadError = error }
+                    }.resume()
+                    semaphore.wait()
+                    if let downloadError { throw downloadError }
+                    DispatchQueue.main.async { self.status = "Verifying and installing part \(index + 1)…" }
+                    let result = archive.path.withCString { String(cString: gtav_setup(Int32(index), $0)) }
+                    if !result.isEmpty { throw SetupError.message(result) }
+                    try FileManager.default.removeItem(at: archive)
+                }
+                DispatchQueue.main.async { self.status = "Checking game files… This can take several minutes."; self.progress = 1 }
+                let result = String(cString: gtav_setup(-1, nil))
+                if !result.isEmpty { throw SetupError.message(result) }
+            } catch { failure = error.localizedDescription }
+            DispatchQueue.main.async {
+                UIApplication.shared.isIdleTimerDisabled = false
+                self.progress = nil
+                self.ready = muguet_game_ready()
+                if let failure { self.error = "Setup paused: \(failure) Tap Download game to resume." }
+            }
+        }
+    }
+
     func run(_ url: URL) {
+        status = "Importing…"
         error = nil
         progress = 0
         DispatchQueue.global(qos: .userInitiated).async {
@@ -97,6 +164,11 @@ final class Importer: ObservableObject {
             }
         }
     }
+}
+
+enum SetupError: LocalizedError {
+    case message(String)
+    var errorDescription: String? { if case .message(let text) = self { return text }; return nil }
 }
 
 struct LauncherView: View {
@@ -121,7 +193,7 @@ struct LauncherView: View {
                     playButton
                     Button("Import other game data…") { picking = true }.font(.caption)
                 }
-                Text("proudly made by c22dev").font(.caption).foregroundStyle(.secondary)
+                Text("Based on Muguet by c22dev").font(.caption).foregroundStyle(.secondary)
             }
             .padding(24)
             .frame(maxWidth: .infinity)
@@ -186,9 +258,14 @@ struct LauncherView: View {
         VStack(spacing: 12) {
             if let p = importer.progress {
                 ProgressView(value: p)
-                Text("Importing… \(Int(p * 100)) %").font(.callout).monospacedDigit()
+                Text(importer.status).font(.callout).monospacedDigit()
             } else {
-                Button("Import game data .zip") { picking = true }
+                Button("Download game · 17 GB") { importer.download() }
+                    .controlSize(.large)
+                    .buttonStyle(.borderedProminent)
+                Text("Allow 19 GB free. Use Wi-Fi and keep this app open. Completed parts are saved.")
+                    .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Button("Import a complete game ZIP…") { picking = true }
                     .controlSize(.large)
                     .buttonStyle(.borderedProminent)
                 ForEach(importer.local, id: \.self) { url in

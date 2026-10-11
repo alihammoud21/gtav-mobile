@@ -115,7 +115,7 @@ impl Drop for StagingCleanup {
     fn drop(&mut self) { let _ = std::fs::remove_dir_all(&self.0); }
 }
 
-fn tidy_lists(data: &Path) -> Result<()> {
+pub(crate) fn tidy_lists(data: &Path) -> Result<()> {
     let dlc = data.join("common/data/dlcList.xml");
     if let Ok(text) = std::fs::read_to_string(&dlc) {
         let kept: Vec<&str> = text.lines().filter(|l| !SKIPPED_DIRS.iter().any(|d| l.to_ascii_lowercase().contains(d))).collect();

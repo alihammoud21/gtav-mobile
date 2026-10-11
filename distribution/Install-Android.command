@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 trap 'result=$?; if [ -t 0 ]; then read -r -p "Press Enter to close. " _ || true; fi; exit "$result"' EXIT
-APK="$PWD/gtav-mobile-android-preview.apk"
+APK="$PWD/gtav-mobile-android.apk"
 [ -f "$APK" ] || { echo 'Extract the entire download first. The APK must be beside this installer.'; exit 1; }
 if [ -x "$PWD/platform-tools/adb" ]; then
   ADB="$PWD/platform-tools/adb"
@@ -19,5 +19,5 @@ fi
 echo 'Connect one Android phone by USB. Enable USB debugging and approve the prompt on the phone.'
 "$ADB" -d get-state >/dev/null || { echo 'No single authorized USB phone found. Unlock it, approve USB debugging, and connect only one phone.'; exit 1; }
 "$ADB" -d install -r "$APK"
-echo 'Installed GTAV Mobile. Open it on your phone and import your own compatible game ZIP.'
-echo 'This is an experimental runtime; game files are not included.'
+echo 'Installed GTAV Mobile. Open it on your phone and tap Download game.'
+echo 'Game setup downloads about 17 GB. Use Wi-Fi and keep the app open.'

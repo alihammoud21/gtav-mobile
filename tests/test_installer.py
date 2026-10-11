@@ -14,7 +14,7 @@ class AndroidInstallerTests(unittest.TestCase):
             root = Path(directory)
             shutil.copy2(ROOT / 'distribution/Install-Android.command', root / 'Install-Android.command')
             if apk:
-                (root / 'gtav-mobile-android-preview.apk').write_bytes(b'test-only')
+                (root / 'gtav-mobile-android.apk').write_bytes(b'test-only')
             tools = root / 'platform-tools'
             tools.mkdir()
             adb = tools / 'adb'

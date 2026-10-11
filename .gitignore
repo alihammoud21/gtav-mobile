@@ -30,3 +30,6 @@ DerivedData/
 
 __pycache__/
 *.py[cod]
+
+*.p12
+*.password

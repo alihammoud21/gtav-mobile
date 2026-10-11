@@ -19,7 +19,7 @@ export ANDROID_HOME=/path/to/your/android-sdk
 
 Output: `build/gtav-mobile-debug.apk`, signed with your local debug key.
 Install with `adb install -r build/gtav-mobile-debug.apk`. Open **GTAV Mobile**,
-choose **Import game ZIP**, then **Play**. Keep the app open during import.
+choose **Download game**, then **Play**. Keep the app open during setup.
 The first launch compiles the game on the device and may take several minutes.
 
 The launcher uses the system file picker and private app storage; it does not
@@ -33,7 +33,10 @@ can start a fresh session.
 
 `./make-android.sh release` produces `build/gtav-mobile-unsigned.apk`.
 Sign and verify it using Android SDK `apksigner` and your own release key.
-Never commit keys or passwords. Android Studio can open the `android/` folder;
+For the release helper, set `GTAV_KEYSTORE`, `GTAV_KEY_PASSWORD_FILE` and
+`GTAV_KEY_ALIAS`, then run `./scripts/sign-android.sh`. It writes the verified
+`build/gtav-mobile-release.apk`. Back up the private key securely: future app
+updates must use the same signing key. Never commit keys or passwords. Android Studio can open the `android/` folder;
 its Gradle build invokes the same Rust build automatically.
 
 Diagnostics for a debug build:
@@ -66,7 +69,12 @@ Output: `build/GTAVMobile.ipa`. For free-account installation, set `FREE=1`
 and a unique `BUNDLE_ID`. The normal signed build requests increased memory;
 free/sideload builds use a smaller heap. Signing and memory availability depend
 on the provisioning profile and device. Game code is compiled into the app;
-import the matching data ZIP in its launcher after installation.
+use **Download game** for the pinned release, or import matching data for a custom build.
+
+For the pinned release, `python3 scripts/fetch-game-code.py` verifies and extracts
+the source executable, then run `./make-ios.sh build/game-source/game.wasm --ipa`.
+The automatic downloader is pinned to build `8b0b5899ed`; custom game builds
+need a matching manifest or manual data import.
 
 A build without a game ZIP can check packaging, but cannot run the game.
 

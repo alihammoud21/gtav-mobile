@@ -1,45 +1,48 @@
 GTAV MOBILE — v0.1.0-alpha.1
-Experimental app downloads. Game files are NOT included.
+Android + iOS, with automatic game setup from playgta5.
+Experimental: builds are checked; real-device gameplay is not yet verified.
 
 ANDROID
-1. You can open gtav-mobile-android-preview.apk directly on your Android phone.
-   Allow installation from that browser/file manager when Android asks.
-2. Or use a USB cable and Install-Android.cmd (Windows) or
-   Install-Android.command (Mac). If Platform-Tools is missing, the installer
-   gives the official download address. Extract platform-tools beside it.
-3. Enable Developer options > USB debugging, unlock the phone and approve
-   your computer. Connect only one phone, then run the installer.
-4. Open GTAV Mobile and import your own compatible game ZIP.
-   The first launch compiles the game and can take several minutes.
+1. Open gtav-mobile-android.apk on your phone and allow installation when asked.
+   Or connect one unlocked phone by USB and run Install-Android.cmd (Windows)
+   or Install-Android.command (Mac). Enable USB debugging and trust the computer.
+2. The USB helpers use Google's Platform-Tools. If missing, download them from
+   https://developer.android.com/tools/releases/platform-tools
+   and extract the platform-tools folder beside the helper.
+3. Open GTAV Mobile, tap Download game, and keep the app open until setup ends.
+   Tap Play. First launch compiles the game and may take several minutes.
 
-Requires ARM64, Android 9+ and Vulkan 1.1. This APK is debug-signed for testing.
-Gameplay and device compatibility have not been validated.
-On Mac, if double-clicking is unavailable, open Terminal in this folder and run:
-    bash Install-Android.command
+Requires ARM64, Android 9+ and Vulkan 1.1. High-memory devices recommended;
+minimum RAM and supported devices have not been established.
+Mac terminal alternative: bash Install-Android.command
 
 IPHONE / IPAD
-GTAVMobile-ios-runtime-preview.ipa is a NON-PLAYABLE runtime preview.
-It contains no embedded game code. Importing a ZIP cannot turn this IPA into
-a playable build: the iOS build must be rebuilt on a Mac with that game code.
-
-To sideload the preview, install AltServer/AltStore using the official guide:
-Windows: https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows
+GTAVMobile-ios.ipa includes the precompiled game executable.
+Install it using AltStore Classic and your own Apple account:
 Mac: https://faq.altstore.io/altstore-classic/how-to-install-altstore-macos
-Connect the phone, trust the computer, and use your own Apple ID in AltServer.
-Enable Developer Mode when required. Import the IPA using AltStore's My Apps +.
-The IPA is ad-hoc signed and must be signed for your device by AltStore or Xcode.
-Simply copying it to the phone or using Android's installer will not install it.
-Free-account signing expires and requires refresh; follow AltStore's guide.
+Windows: https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows
 
-For a personal iOS build with compatible files you are authorized to use:
-https://github.com/alihammoud21/gtav-mobile/blob/main/docs/BUILDING.md
+Connect your phone, trust the computer, and follow that guide to install AltStore.
+Import GTAVMobile-ios.ipa using My Apps +. Enable Developer Mode when required.
+Then open GTAV Mobile, tap Download game, keep it open until setup ends, and Play.
 
-GAME FORMAT
-Your own archive must contain data/manifest.json, b/<build>/game.wasm and
-b/<build>/shaders/. A normal PC installation is not this format.
-This release does not download or redistribute assets from playgta5.
+The IPA must be re-signed for your phone; simply copying it by USB cannot install
+it. Free-account signing requires periodic refresh. iOS 15+; an 8 GB RAM device
+is recommended by the original runtime. Memory limits depend on device/signing,
+and this build has not been gameplay-tested on a phone.
+
+GAME SETUP
+Use Wi-Fi. First setup downloads about 17 GB and installs about 16 GB.
+Allow at least 19 GB free, plus extra space for Android's compiled game cache.
+Both apps fetch pinned archives from alihammoud21/playgta5, verify SHA-256 hashes,
+and save completed parts. If interrupted, tap Download game to resume; only the
+unfinished part restarts. After setup, single-player data is available offline.
+The desktop ZIP contains the apps and USB helpers; the game data downloads on
+the phone during first setup. It is not a 17 GB offline installer.
+Uninstalling the app removes its private game files and saves.
 
 SOURCE AND LICENSE
 https://github.com/alihammoud21/gtav-mobile
-GPL-3.0-or-later. Original Muguet credits are retained in NOTICE.md.
+GPL-3.0-or-later runtime. Original Muguet credits are retained in NOTICE.md.
+Game files are separate from the runtime's GPL license; see GAME-DATA.md.
 Independent project; not affiliated with Rockstar Games or Take-Two.

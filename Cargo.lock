@@ -1053,6 +1053,7 @@ dependencies = [
  "pollster",
  "regex",
  "serde_json",
+ "sha2",
  "wasm-encoder",
  "wasmparser",
  "wasmtime",

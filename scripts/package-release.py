@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Package verified local preview builds; never include game archives or signing keys."""
+"""Package the Android app, iOS game build, and desktop installation helpers."""
 import argparse
 import hashlib
 from pathlib import Path
@@ -28,7 +28,7 @@ def has_embedded_game(binary):
 def package(version):
     if not version.startswith('v') or any(c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-' for c in version):
         raise ValueError('Use a version such as v0.1.0-alpha.1')
-    apk = ROOT / 'build/gtav-mobile-debug.apk'
+    apk = ROOT / 'build/gtav-mobile-release.apk'
     ipa = ROOT / 'build/GTAVMobile.ipa'
     with zipfile.ZipFile(apk) as archive:
         required = {'AndroidManifest.xml', 'lib/arm64-v8a/libgtav_mobile.so', 'classes.dex'}
@@ -38,14 +38,14 @@ def package(version):
             raise ValueError('Android APK has corrupt ZIP entries')
     with zipfile.ZipFile(ipa) as archive:
         binary = archive.read('Payload/GTAVMobile.app/gtav-mobile')
-        if has_embedded_game(binary):
-            raise ValueError('Refusing to publish embedded game code as a runtime-only preview')
+        if not has_embedded_game(binary):
+            raise ValueError('Refusing to publish an iOS app without embedded game code')
         if archive.testzip():
             raise ValueError('iOS IPA has corrupt ZIP entries')
     out = ROOT / 'build/releases' / version
     out.mkdir(parents=True, exist_ok=True)
     outputs = []
-    for source, name in [(apk, 'gtav-mobile-android-preview.apk'), (ipa, 'GTAVMobile-ios-runtime-preview.ipa')]:
+    for source, name in [(apk, 'gtav-mobile-android.apk'), (ipa, 'GTAVMobile-ios.ipa')]:
         destination = out / name
         shutil.copy2(source, destination)
         outputs.append(destination)
@@ -55,7 +55,7 @@ def package(version):
             archive.write(artifact, 'GTAV-Mobile/' + artifact.name)
         for name in ['Install-Android.command', 'Install-Android.cmd', 'START-HERE.txt']:
             archive.write(ROOT / 'distribution' / name, 'GTAV-Mobile/' + name)
-        for name in ['LICENSE', 'NOTICE.md']:
+        for name in ['LICENSE', 'NOTICE.md', 'GAME-DATA.md']:
             archive.write(ROOT / name, 'GTAV-Mobile/' + name)
     outputs.append(bundle)
     install = out / 'INSTALL.txt'

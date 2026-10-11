@@ -3,35 +3,26 @@
 # GTAV Mobile
 **Your game. On the move.**
 
-Native runtime for **iOS · Android · macOS**.
-Powered by Rust, Wasmtime and wgpu. Bring your own compatible game files.
+iOS · Android · macOS — powered by Rust, Wasmtime and wgpu.
 
-[Download preview](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.1) · [Install guide](docs/INSTALLING.md) · [Build guide](docs/BUILDING.md)
-
-[License](LICENSE) · [Credits](NOTICE.md)
+[**Download**](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.1) · [Install](docs/INSTALLING.md) · [Build](docs/BUILDING.md) · [Credits](NOTICE.md)
 
 </div>
 
-## How it works
-Runs the web port's `game.wasm` in a native app, with Metal on Apple devices and Vulkan on Android. iOS compiles the game at build time; Android and macOS compile and cache it on first launch.
+### Get started
 
-## Get started
-Download the Android APK or iOS **runtime-only preview** from [Releases](https://github.com/alihammoud21/gtav-mobile/releases/tag/v0.1.0-alpha.1). The iOS preview cannot play; rebuild it with your own game code.
+1. Download the **Android APK**, **iOS IPA**, or **desktop installer bundle**.
+2. Install on your phone. iOS uses [AltStore](docs/INSTALLING.md#ios); USB helpers are included for Android.
+3. Open the app → **Download game** → **Play**.
 
-Your ZIP needs `data/manifest.json`, `b/<build>/game.wasm` and `b/<build>/shaders/`. Game files are **not included**; a standard PC installation alone is not this format.
+Setup fetches the matching game from [playgta5](https://github.com/alihammoud21/playgta5/releases/tag/full-game-v1), verifies every file, and resumes completed parts. Use Wi-Fi: about **17 GB downloaded**, **16 GB installed**. Allow **19 GB free**, plus Android's compilation cache.
 
-| Platform | Build |
-| --- | --- |
-| iOS | `TEAM=YOUR_TEAM ./make-ios.sh game.zip --install` |
-| Android | `./make-android.sh` |
-| macOS | `./make-app.sh` |
+### Made for mobile
 
-See the [build guide](docs/BUILDING.md) for prerequisites, APK/IPA output and signing.
+Touch controls, controller support, graphics settings, and custom multiplayer.
+iOS includes precompiled game code; Android compiles it on first launch.
+Single-player data stays available offline after setup.
 
-## Play together
-Host a session or join a server from the launcher. Uses **UDP 47520**; story missions remain single player.
+**Experimental alpha.** Builds and installer checks pass; physical-device gameplay is not yet verified. Android: ARM64, Android 9+, Vulkan 1.1. iOS: 15+, high-memory device recommended.
 
-## Status
-Android support is **experimental**: ARM64, Android 9+, Vulkan 1.1. Device gameplay and background/resume still need validation with compatible game data. iOS retains the upstream memory and signing constraints.
-
-<sub>Based on [Muguet](https://github.com/c22dev/muguet) by Constantin Clerc and contributors. GPL-3.0-or-later. An independent project, unaffiliated with Rockstar Games or Take-Two Interactive.</sub>
+<sub>Based on [Muguet](https://github.com/c22dev/muguet) by Constantin Clerc and contributors. Runtime: [GPL-3.0-or-later](LICENSE). [Game data](GAME-DATA.md) has separate rights. Independent project, unaffiliated with Rockstar Games or Take-Two.</sub>

@@ -14,10 +14,11 @@ import org.json.JSONObject;
 /** Imports through the system document picker; no broad storage permission. */
 public final class LauncherActivity extends Activity {
     static { System.loadLibrary("gtav_mobile"); }
+    private static native String gameSetup(String destination, String archive, int index);
     private static native String importGame(String archive, String destination);
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private TextView status;
-    private Button play, importer;
+    private Button play, importer, downloader;
     private EditText server, player;
     private Switch multiplayer, host;
     private Spinner mode;
@@ -32,9 +33,11 @@ public final class LauncherActivity extends Activity {
         ScrollView scroll = new ScrollView(this); scroll.addView(layout); setContentView(scroll);
         TextView title = new TextView(this); title.setText("GTAV Mobile"); title.setTextSize(32); layout.addView(title);
         TextView intro = new TextView(this);
-        intro.setText("Your game. On the move.\nImport your own compatible game ZIP to get started.");
+        intro.setText("Your game. On the move.\nDownload game once, then play offline. Wi-Fi recommended. Keep the app open during setup.");
         intro.setPadding(0, pad, 0, pad); layout.addView(intro);
         status = new TextView(this); layout.addView(status);
+        downloader = new Button(this); downloader.setText("Download game · 17 GB"); layout.addView(downloader);
+        downloader.setOnClickListener(v -> downloadGame());
         importer = new Button(this); importer.setText("Import game ZIP"); layout.addView(importer);
         importer.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE);
@@ -94,8 +97,9 @@ public final class LauncherActivity extends Activity {
         return false;
     }
     private void refresh() {
-        play.setEnabled(!importing && ready()); importer.setEnabled(!importing);
-        if (!importing) status.setText(ready() ? "Ready. First launch compiles the game and can take several minutes." : "No game files imported yet.");
+        play.setEnabled(!importing && ready()); importer.setEnabled(!importing); downloader.setEnabled(!importing);
+        downloader.setVisibility(ready() ? View.GONE : View.VISIBLE);
+        if (!importing) status.setText(ready() ? "Ready. First launch compiles the game and can take several minutes." : "Allow at least 19 GB free for setup. Completed download parts are saved.");
     }
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
@@ -125,6 +129,66 @@ public final class LauncherActivity extends Activity {
             });
         });
     }
+    private void downloadGame() {
+        importing = true; refresh();
+        status.setText("Preparing download… Keep this app open.");
+        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        worker.execute(() -> {
+            String failure = null;
+            File archive = new File(getFilesDir(), "game-download.zip");
+            String destination = new File(getFilesDir(), "game").getAbsolutePath();
+            try {
+                JSONObject manifest = new JSONObject(gameSetup(destination, "", -2));
+                org.json.JSONArray parts = manifest.getJSONArray("parts");
+                for (int i = 0; i < parts.length(); i++) {
+                    JSONObject part = parts.getJSONObject(i);
+                    if (part.getBoolean("done")) continue;
+                    final String label = "Part " + (i + 1) + " of " + parts.length();
+                    archive.delete();
+                    if (getFilesDir().getUsableSpace() < part.getLong("bytes") * 2 + 256L * 1024 * 1024)
+                        throw new IOException("Not enough free storage. Free space, then resume setup.");
+                    java.net.HttpURLConnection connection = (java.net.HttpURLConnection)new java.net.URL(part.getString("url")).openConnection();
+                    connection.setConnectTimeout(30000); connection.setReadTimeout(60000);
+                    try {
+                        if (connection.getResponseCode() != 200) throw new IOException("Download server returned " + connection.getResponseCode());
+                        long expected = part.getLong("bytes"), received = 0, reported = 0;
+                        try (InputStream in = connection.getInputStream(); OutputStream out = new BufferedOutputStream(new FileOutputStream(archive))) {
+                            byte[] buffer = new byte[1024 * 1024]; int count;
+                            while ((count = in.read(buffer)) != -1) {
+                                received += count;
+                                if (received > expected) throw new IOException("Unexpected download size");
+                                out.write(buffer, 0, count);
+                                if (received - reported > 8 * 1024 * 1024) {
+                                    reported = received;
+                                    final String message = label + " · " + (received * 100 / expected) + "%";
+                                    runOnUiThread(() -> status.setText(message));
+                                }
+                            }
+                            if (received != expected) throw new IOException("Download interrupted. Tap Download game to resume.");
+                        }
+                    } finally { connection.disconnect(); }
+                    runOnUiThread(() -> status.setText(label + " · Verifying and installing…"));
+                    String result = gameSetup(destination, archive.getAbsolutePath(), i);
+                    if (result == null || !result.isEmpty()) throw new IOException(result == null ? "Installer unavailable" : result);
+                    archive.delete();
+                }
+                runOnUiThread(() -> status.setText("Checking game files… This can take several minutes."));
+                String result = gameSetup(destination, "", -1);
+                if (result == null || !result.isEmpty()) throw new IOException(result == null ? "Installer unavailable" : result);
+            } catch (Exception error) { failure = error.getMessage() == null ? error.toString() : error.getMessage(); }
+            finally { archive.delete(); }
+            final String message = failure;
+            runOnUiThread(() -> {
+                if (isDestroyed()) return;
+                importing = false; refresh();
+                if (message != null) status.setText("Setup paused: " + message + "\nTap Download game to resume.");
+                getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            });
+        });
+    }
+
     @Override public void onBackPressed() {
         if (importing) { status.setText("Please wait for the import to finish."); return; }
         super.onBackPressed();

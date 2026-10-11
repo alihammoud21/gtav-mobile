@@ -167,3 +167,36 @@ pub extern "system" fn Java_com_alihammoud21_gtavmobile_GameActivity_nativeLoadi
 ) -> jboolean {
     (crate::gpu::PRESENTS.load(std::sync::atomic::Ordering::Relaxed) == 0) as jboolean
 }
+
+#[no_mangle]
+pub extern "system" fn Java_com_alihammoud21_gtavmobile_LauncherActivity_gameSetup(
+    mut env: JNIEnv,
+    _class: JClass,
+    destination: JString,
+    archive: JString,
+    index: jint,
+) -> jstring {
+    let result = (|| -> anyhow::Result<String> {
+        let destination: String = env.get_string(&destination)?.into();
+        let dest = std::path::Path::new(&destination);
+        if index == -2 {
+            return Ok(crate::game_data::status(dest, true));
+        }
+        if index == -1 {
+            crate::game_data::finish(dest, true)?;
+        } else {
+            let archive: String = env.get_string(&archive)?.into();
+            crate::game_data::install_part(
+                dest,
+                std::path::Path::new(&archive),
+                index as usize,
+                true,
+            )?;
+        }
+        Ok(String::new())
+    })();
+    let message = result.unwrap_or_else(|e| format!("{e:#}"));
+    env.new_string(message)
+        .map(|s| s.into_raw())
+        .unwrap_or(std::ptr::null_mut())
+}

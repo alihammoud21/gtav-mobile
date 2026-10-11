@@ -10,6 +10,8 @@ mod gpu;
 mod host;
 mod input;
 mod import;
+#[cfg(any(target_os = "ios", target_os = "android", test))]
+mod game_data;
 mod io;
 mod mp;
 #[cfg(target_vendor = "apple")]

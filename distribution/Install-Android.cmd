@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-set "APK=%~dp0gtav-mobile-android-preview.apk"
+set "APK=%~dp0gtav-mobile-android.apk"
 if not exist "%APK%" (
   echo Extract the entire download first. The APK must be beside this installer.
   pause
@@ -33,6 +33,6 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-echo Installed GTAV Mobile. Open it on your phone and import your own compatible game ZIP.
-echo This is an experimental runtime; game files are not included.
+echo Installed GTAV Mobile. Open it on your phone and tap Download game.
+echo Game setup downloads about 17 GB. Use Wi-Fi and keep the app open.
 pause
