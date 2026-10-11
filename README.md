@@ -24,5 +24,3 @@ iOS includes precompiled game code; Android compiles it on first launch.
 Single-player data stays available offline after setup.
 
 **Experimental alpha.** Builds and installer checks pass; physical-device gameplay is not yet verified. Android: ARM64, Android 9+, Vulkan 1.1. iOS: 15+, high-memory device recommended.
-
-<sub>Based on [Muguet](https://github.com/c22dev/muguet) by Constantin Clerc and contributors. Runtime: [GPL-3.0-or-later](LICENSE). [Game data](GAME-DATA.md) has separate rights. Independent project, unaffiliated with Rockstar Games or Take-Two.</sub>
